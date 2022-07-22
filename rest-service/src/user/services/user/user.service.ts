@@ -6,7 +6,7 @@ import { v4 } from 'uuid';
 
 @Injectable()
 export class UserService {
-    private users: User[] = [];
+    users: User[] = [];
 
     getUsers(loginSubstring?: string, limit?: number) {
         let currentUsers = [...this.users];
