@@ -5,6 +5,7 @@ import {
     Get,
     HttpException,
     Param,
+    ParseIntPipe,
     Post,
     Put,
     Query,
@@ -13,16 +14,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './services/user/user.service';
 
-@Controller('user')
+@Controller('v1/users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
     @Get()
     getAllUsers(
         @Query('loginSubstring') loginSubstring: string,
-        @Query('limit') limit: number,
+        @Query('limit', ParseIntPipe) limit: number,
     ) {
-        return this.userService.getUsers(loginSubstring, +limit);
+        return this.userService.getUsers(loginSubstring, limit);
     }
 
     @Get(':id')
@@ -46,7 +47,10 @@ export class UserController {
 
     @Put(':id')
     updateUser(@Body() updateUserDto: UpdateUserDto, @Param('id') id: string) {
-        if (!this.userService.checkLogin(updateUserDto.login)) {
+        if (
+            !updateUserDto.login ||
+            !this.userService.checkLogin(id, updateUserDto.login)
+        ) {
             return this.userService.updateUser(id, updateUserDto);
         } else {
             throw new HttpException('user already exists', 400);

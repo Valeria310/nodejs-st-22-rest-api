@@ -9,19 +9,19 @@ export class UserService {
     users: User[] = [];
 
     getUsers(loginSubstring?: string, limit?: number) {
-        let currentUsers = [...this.users];
+        // let currentUsers = [...this.users];
         if (loginSubstring) {
-            currentUsers = currentUsers.filter(
-                (user) => user.login.indexOf(loginSubstring) !== -1,
+            this.users = this.users.filter((user) =>
+                user.login.includes(loginSubstring),
             );
         }
         if (limit) {
-            return currentUsers
+            return this.users
                 .filter((user) => !user.isDeleted)
                 .slice(0, limit)
                 .sort((a, b) => a.login.localeCompare(b.login));
         } else {
-            return currentUsers.filter((user) => !user.isDeleted);
+            return this.users.filter((user) => !user.isDeleted);
         }
     }
 
@@ -35,8 +35,12 @@ export class UserService {
         return newUser;
     }
 
-    checkLogin(userLogin: string) {
-        if (this.users.find((user) => user.login === userLogin)) {
+    checkLogin(userLogin: string, userId?: string) {
+        if (
+            this.users.find((user) => {
+                return user.login === userLogin && user.id !== userId;
+            })
+        ) {
             return true;
         }
         return false;
@@ -44,14 +48,16 @@ export class UserService {
 
     updateUser(id: string, updateUserDto: UpdateUserDto) {
         const user = this.getUserById(id);
-        const newUser = { ...user, ...updateUserDto };
-        const userIndex = this.users.indexOf(user);
-        this.users[userIndex] = newUser;
-        return newUser;
+        if (!user) return null;
+        for (const key of Object.keys(updateUserDto)) {
+            user[key] = updateUserDto[key];
+        }
+        return user;
     }
 
     deleteUser(id: string) {
         const user = this.getUserById(id);
+        if (!user) return null;
         user.isDeleted = true;
         return user;
     }
