@@ -3,6 +3,7 @@ import {
     Controller,
     Delete,
     Get,
+    HttpException,
     Param,
     Post,
     Put,
@@ -31,7 +32,11 @@ export class UserController {
 
     @Post()
     create(@Body() createUserDto: CreateUserDto) {
-        return this.userService.createUser(createUserDto);
+        if (!this.userService.checkLogin(createUserDto.login)) {
+            return this.userService.createUser(createUserDto);
+        } else {
+            throw new HttpException('user already exists', 400);
+        }
     }
 
     @Delete(':id')
@@ -41,6 +46,10 @@ export class UserController {
 
     @Put(':id')
     updateUser(@Body() updateUserDto: UpdateUserDto, @Param('id') id: string) {
-        return this.userService.updateUser(id, updateUserDto);
+        if (!this.userService.checkLogin(updateUserDto.login)) {
+            return this.userService.updateUser(id, updateUserDto);
+        } else {
+            throw new HttpException('user already exists', 400);
+        }
     }
 }

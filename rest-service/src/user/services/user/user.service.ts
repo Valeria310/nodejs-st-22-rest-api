@@ -18,7 +18,7 @@ export class UserService {
         if (limit) {
             return currentUsers
                 .filter((user) => !user.isDeleted)
-                .slice(0, limit - 1)
+                .slice(0, limit)
                 .sort((a, b) => a.login.localeCompare(b.login));
         } else {
             return currentUsers.filter((user) => !user.isDeleted);
@@ -33,6 +33,13 @@ export class UserService {
         const newUser = { id: v4(), ...createUserDto, isDeleted: false };
         this.users.push(newUser);
         return newUser;
+    }
+
+    checkLogin(userLogin: string) {
+        if (this.users.find((user) => user.login === userLogin)) {
+            return true;
+        }
+        return false;
     }
 
     updateUser(id: string, updateUserDto: UpdateUserDto) {
