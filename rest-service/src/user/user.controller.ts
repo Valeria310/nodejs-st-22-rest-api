@@ -23,7 +23,7 @@ export class UserController {
         @Query('loginSubstring') loginSubstring: string,
         @Query('limit', ParseIntPipe) limit: number,
     ) {
-        return this.userService.getUsers(loginSubstring, limit);
+        return this.userService.getUsers(limit, loginSubstring);
     }
 
     @Get(':id')

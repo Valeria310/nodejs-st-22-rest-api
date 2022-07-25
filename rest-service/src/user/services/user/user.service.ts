@@ -8,20 +8,20 @@ import { v4 } from 'uuid';
 export class UserService {
     users: User[] = [];
 
-    getUsers(loginSubstring?: string, limit?: number) {
-        // let currentUsers = [...this.users];
+    getUsers(limit: number, loginSubstring?: string) {
+        let currentUsers = [...this.users];
         if (loginSubstring) {
-            this.users = this.users.filter((user) =>
+            currentUsers = currentUsers.filter((user) =>
                 user.login.includes(loginSubstring),
             );
         }
         if (limit) {
-            return this.users
+            return currentUsers
                 .filter((user) => !user.isDeleted)
                 .slice(0, limit)
                 .sort((a, b) => a.login.localeCompare(b.login));
         } else {
-            return this.users.filter((user) => !user.isDeleted);
+            return currentUsers.filter((user) => !user.isDeleted);
         }
     }
 
