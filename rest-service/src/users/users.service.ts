@@ -1,22 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InMemoryRepository } from './repository/in-memory-users.repository';
+// import { InMemoryRepository } from './repository/in-memory-users.repository';
+import { PostgreSQLRepository } from './repository/postgreSQL-users.repository';
 
 @Injectable()
 export class UsersService {
-    constructor(private repository: InMemoryRepository) {}
+    constructor(private repository: PostgreSQLRepository) {}
 
     create(createUserDto: CreateUserDto) {
         return this.repository.create(createUserDto);
     }
 
-    checkLogin(userLogin: string, userId?: string) {
+    isLoginFree(userLogin: string, userId?: string) {
         return this.repository.checkLogin(userLogin, userId);
     }
 
-    findAll(limit: number, loginSubstring?: string) {
-        let currentUsers = this.repository.findAll();
+    async findAll(limit: number, loginSubstring?: string) {
+        let currentUsers = await this.repository.findAll();
         if (loginSubstring) {
             currentUsers = currentUsers.filter((user) =>
                 user.login.includes(loginSubstring),

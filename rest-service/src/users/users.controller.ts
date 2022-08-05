@@ -19,8 +19,8 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @Post()
-    create(@Body() createUserDto: CreateUserDto) {
-        if (!this.usersService.checkLogin(createUserDto.login)) {
+    async create(@Body() createUserDto: CreateUserDto) {
+        if (!(await this.usersService.isLoginFree(createUserDto.login))) {
             return this.usersService.create(createUserDto);
         } else {
             throw new HttpException('user already exists', 400);
@@ -41,10 +41,13 @@ export class UsersController {
     }
 
     @Put(':id')
-    update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    async update(
+        @Param('id') id: string,
+        @Body() updateUserDto: UpdateUserDto,
+    ) {
         if (
             !updateUserDto.login ||
-            !this.usersService.checkLogin(id, updateUserDto.login)
+            !(await this.usersService.isLoginFree(updateUserDto.login, id))
         ) {
             return this.usersService.update(id, updateUserDto);
         } else {
