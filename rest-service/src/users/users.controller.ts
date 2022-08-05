@@ -20,7 +20,7 @@ export class UsersController {
 
     @Post()
     async create(@Body() createUserDto: CreateUserDto) {
-        if (!(await this.usersService.checkLogin(createUserDto.login))) {
+        if (!(await this.usersService.isLoginFree(createUserDto.login))) {
             return this.usersService.create(createUserDto);
         } else {
             throw new HttpException('user already exists', 400);
@@ -47,7 +47,7 @@ export class UsersController {
     ) {
         if (
             !updateUserDto.login ||
-            !(await this.usersService.checkLogin(updateUserDto.login, id))
+            !(await this.usersService.isLoginFree(updateUserDto.login, id))
         ) {
             return this.usersService.update(id, updateUserDto);
         } else {

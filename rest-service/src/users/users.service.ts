@@ -12,7 +12,7 @@ export class UsersService {
         return this.repository.create(createUserDto);
     }
 
-    checkLogin(userLogin: string, userId?: string) {
+    isLoginFree(userLogin: string, userId?: string) {
         return this.repository.checkLogin(userLogin, userId);
     }
 
