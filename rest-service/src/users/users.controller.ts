@@ -47,7 +47,7 @@ export class UsersController {
     ) {
         if (
             !updateUserDto.login ||
-            !(await this.usersService.checkLogin(id, updateUserDto.login))
+            !(await this.usersService.checkLogin(updateUserDto.login, id))
         ) {
             return this.usersService.update(id, updateUserDto);
         } else {
